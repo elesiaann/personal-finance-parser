@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Personal Finance Parser</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">💰</span>
+        <span class="logo-text">Finance Parser</span>
+      </div>
+      <nav class="tabs" id="mainTabs">
+        <button class="tab-btn active" data-tab="upload">Upload</button>
+        <button class="tab-btn" data-tab="overview" disabled>Overview</button>
+        <button class="tab-btn" data-tab="transactions" disabled>Transactions</button>
+        <button class="tab-btn" data-tab="categories" disabled>Categories</button>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- UPLOAD TAB -->
+    <section id="tab-upload" class="tab-content active">
+      <div class="upload-hero">
+        <h1>Import Your Bank Statement</h1>
+        <p>Upload a CSV file from your bank and instantly see a breakdown of your spending.</p>
+
+        <div class="drop-zone" id="dropZone">
+          <div class="drop-icon">📂</div>
+          <p class="drop-title">Drag &amp; drop your CSV file here</p>
+          <p class="drop-sub">or</p>
+          <label class="btn-primary" for="fileInput">Browse File</label>
+          <input type="file" id="fileInput" accept=".csv" hidden />
+        </div>
+
+        <div class="format-hint">
+          <h3>Supported CSV Formats</h3>
+          <div class="format-cards">
+            <div class="format-card">
+              <strong>Standard Bank Export</strong>
+              <code>Date, Description, Amount</code>
+            </div>
+            <div class="format-card">
+              <strong>Chase / Bank of America</strong>
+              <code>Transaction Date, Description, Amount</code>
+            </div>
+            <div class="format-card">
+              <strong>Mint / YNAB Style</strong>
+              <code>Date, Description, Amount, Category</code>
+            </div>
+          </div>
+          <p class="format-note">Don't have a file? <a href="#" id="loadSample">Load sample data</a> to explore.</p>
+        </div>
+      </div>
+
+      <div id="parseError" class="error-box hidden"></div>
+    </section>
+
+    <!-- OVERVIEW TAB -->
+    <section id="tab-overview" class="tab-content">
+      <div class="dashboard-grid">
+        <div class="stat-card income">
+          <div class="stat-label">Total Income</div>
+          <div class="stat-value" id="totalIncome">$0.00</div>
+        </div>
+        <div class="stat-card expenses">
+          <div class="stat-label">Total Expenses</div>
+          <div class="stat-value" id="totalExpenses">$0.00</div>
+        </div>
+        <div class="stat-card net">
+          <div class="stat-label">Net Balance</div>
+          <div class="stat-value" id="netBalance">$0.00</div>
+        </div>
+        <div class="stat-card count">
+          <div class="stat-label">Transactions</div>
+          <div class="stat-value" id="txCount">0</div>
+        </div>
+      </div>
+
+      <div class="charts-row">
+        <div class="chart-card">
+          <h2>Spending by Category</h2>
+          <div class="chart-wrap">
+            <canvas id="categoryChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <h2>Monthly Spending</h2>
+          <div class="chart-wrap">
+            <canvas id="monthlyChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <div class="chart-card full-width">
+        <h2>Daily Spending Over Time</h2>
+        <div class="chart-wrap tall">
+          <canvas id="dailyChart"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRANSACTIONS TAB -->
+    <section id="tab-transactions" class="tab-content">
+      <div class="table-controls">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search transactions…" />
+        <select id="categoryFilter" class="select-input">
+          <option value="">All Categories</option>
+        </select>
+        <select id="monthFilter" class="select-input">
+          <option value="">All Months</option>
+        </select>
+        <button class="btn-outline" id="exportCsv">Export CSV</button>
+      </div>
+
+      <div class="table-wrap">
+        <table id="txTable">
+          <thead>
+            <tr>
+              <th data-sort="date">Date <span class="sort-icon">↕</span></th>
+              <th data-sort="description">Description <span class="sort-icon">↕</span></th>
+              <th data-sort="category">Category <span class="sort-icon">↕</span></th>
+              <th data-sort="amount" class="right">Amount <span class="sort-icon">↕</span></th>
+            </tr>
+          </thead>
+          <tbody id="txBody"></tbody>
+        </table>
+      </div>
+      <div class="pagination" id="pagination"></div>
+    </section>
+
+    <!-- CATEGORIES TAB -->
+    <section id="tab-categories" class="tab-content">
+      <div class="categories-header">
+        <h2>Category Breakdown</h2>
+        <p>Rename categories by clicking on them. Changes update the charts instantly.</p>
+      </div>
+      <div id="categoryCards" class="category-grid"></div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Personal Finance Parser &mdash; all data stays in your browser, nothing is uploaded.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
